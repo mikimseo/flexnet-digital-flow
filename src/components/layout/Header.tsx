@@ -9,7 +9,6 @@ const navigation = [
   { name: "Услуги", href: "#services", key: "services" },
   { name: "Портфолио", href: "#portfolio", key: "portfolio" },
   { name: "Отзывы", href: "#reviews", key: "reviews" },
-  { name: "Блог", href: "#blog", key: "blog" },
   { name: "Контакты", href: "#contacts", key: "contacts" },
 ];
 

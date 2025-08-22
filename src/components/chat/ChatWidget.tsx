@@ -172,14 +172,6 @@ export function ChatWidget({ className }: ChatWidgetProps) {
           >
             <Minimize2 className="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
-            onClick={() => setIsOpen(false)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 

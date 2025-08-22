@@ -53,9 +53,14 @@ export function ChatWidget({ className }: ChatWidgetProps) {
     localStorage.setItem("flexnet-chat-messages", JSON.stringify(messages));
   }, [messages]);
 
-  // Auto scroll to bottom
+  // Auto scroll to bottom within chat container only
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      const chatContainer = messagesEndRef.current.closest('.overflow-y-auto');
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }
   }, [messages]);
 
   const sendMessage = async (e?: React.FormEvent | React.MouseEvent) => {

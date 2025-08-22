@@ -58,7 +58,8 @@ export function ChatWidget({ className }: ChatWidgetProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendMessage = async () => {
+  const sendMessage = async (e?: React.FormEvent | React.MouseEvent) => {
+    e?.preventDefault();
     if (!inputMessage.trim()) return;
 
     const userMessage: Message = {

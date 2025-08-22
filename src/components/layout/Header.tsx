@@ -66,8 +66,8 @@ export function Header() {
               </Button>
             </div>
             <ThemeToggle />
-            <Button className="btn-gradient">
-              Обсудить проект
+            <Button className="btn-gradient" asChild>
+              <a href="#contacts">Обсудить проект</a>
             </Button>
           </div>
         </div>
@@ -124,8 +124,8 @@ export function Header() {
                   </div>
                   <ThemeToggle />
                 </div>
-                <Button className="w-full btn-gradient">
-                  Обсудить проект
+                <Button className="w-full btn-gradient" asChild>
+                  <a href="#contacts">Обсудить проект</a>
                 </Button>
               </div>
             </div>

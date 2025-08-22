@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { Menu, X, Instagram, Music } from "lucide-react";
+import { Menu, X, Instagram, Music, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 const navigation = [
   { name: "Главная", href: "#hero", key: "home" },
@@ -14,6 +15,7 @@ const navigation = [
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isAdmin } = useAuth();
 
   return (
     <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
@@ -66,6 +68,19 @@ export function Header() {
               </Button>
             </div>
             <ThemeToggle />
+            {user && isAdmin && (
+              <Button variant="outline" size="sm" asChild>
+                <a href="/admin">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Админ
+                </a>
+              </Button>
+            )}
+            {!user && (
+              <Button variant="outline" size="sm" asChild>
+                <a href="/auth">Войти</a>
+              </Button>
+            )}
             <Button className="btn-gradient" asChild>
               <a href="#contacts">Обсудить проект</a>
             </Button>
@@ -124,6 +139,19 @@ export function Header() {
                   </div>
                   <ThemeToggle />
                 </div>
+                {user && isAdmin && (
+                  <Button variant="outline" className="w-full" asChild>
+                    <a href="/admin">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Админ панель
+                    </a>
+                  </Button>
+                )}
+                {!user && (
+                  <Button variant="outline" className="w-full" asChild>
+                    <a href="/auth">Войти</a>
+                  </Button>
+                )}
                 <Button className="w-full btn-gradient" asChild>
                   <a href="#contacts">Обсудить проект</a>
                 </Button>

@@ -72,8 +72,8 @@ export function Footer() {
           {/* CTA and social */}
           <div>
             <h3 className="text-white font-semibold text-lg mb-4">Связаться с нами</h3>
-            <Button className="w-full mb-6 btn-gradient">
-              Обсудить проект
+            <Button className="w-full mb-6 btn-gradient" asChild>
+              <a href="#contacts">Обсудить проект</a>
             </Button>
             
             <div className="flex gap-4">

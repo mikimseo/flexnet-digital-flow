@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Menu, X, Instagram, Music, Settings } from "lucide-react";
@@ -70,15 +71,15 @@ export function Header() {
             <ThemeToggle />
             {user && isAdmin && (
               <Button variant="outline" size="sm" asChild>
-                <a href="/admin">
+                <Link to="/admin">
                   <Settings className="h-4 w-4 mr-2" />
                   Админ
-                </a>
+                </Link>
               </Button>
             )}
             {!user && (
               <Button variant="outline" size="sm" asChild>
-                <a href="/auth">Войти</a>
+                <Link to="/auth">Войти</Link>
               </Button>
             )}
             <Button className="btn-gradient" asChild>
@@ -141,15 +142,15 @@ export function Header() {
                 </div>
                 {user && isAdmin && (
                   <Button variant="outline" className="w-full" asChild>
-                    <a href="/admin">
+                    <Link to="/admin">
                       <Settings className="h-4 w-4 mr-2" />
                       Админ панель
-                    </a>
+                    </Link>
                   </Button>
                 )}
                 {!user && (
                   <Button variant="outline" className="w-full" asChild>
-                    <a href="/auth">Войти</a>
+                    <Link to="/auth">Войти</Link>
                   </Button>
                 )}
                 <Button className="w-full btn-gradient" asChild>

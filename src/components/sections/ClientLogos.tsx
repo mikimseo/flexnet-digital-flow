@@ -109,10 +109,7 @@ export function ClientLogos() {
             Нам доверяют
           </h2>
           <p className="text-muted-foreground">
-            {companies.length > 0 
-              ? `${companies.length} компаний выбрали нас для реализации своих проектов`
-              : 'Более 50 компаний выбрали нас для реализации своих проектов'
-            }
+            Компании, которые доверили нам свои проекты
           </p>
         </div>
         

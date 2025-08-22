@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X, Instagram, Music } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
@@ -53,10 +53,18 @@ export function Header() {
 
           {/* Right side actions */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4 items-center">
-            <Button variant="outline" size="sm" className="gap-2">
-              <Globe className="h-4 w-4" />
-              RU
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" asChild>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                  <Instagram className="h-4 w-4" />
+                </a>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">
+                  <Music className="h-4 w-4" />
+                </a>
+              </Button>
+            </div>
             <ThemeToggle />
             <Button className="btn-gradient">
               Обсудить проект
@@ -102,10 +110,18 @@ export function Header() {
               </div>
               <div className="py-6 space-y-4">
                 <div className="flex items-center gap-4">
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Globe className="h-4 w-4" />
-                    RU
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm" asChild>
+                      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                        <Instagram className="h-4 w-4" />
+                      </a>
+                    </Button>
+                    <Button variant="ghost" size="sm" asChild>
+                      <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">
+                        <Music className="h-4 w-4" />
+                      </a>
+                    </Button>
+                  </div>
                   <ThemeToggle />
                 </div>
                 <Button className="w-full btn-gradient">

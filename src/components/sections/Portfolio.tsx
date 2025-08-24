@@ -150,14 +150,6 @@ export function Portfolio() {
                 <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
                   <div className="text-6xl opacity-20">🚀</div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <Button size="sm" className="w-full bg-white/90 text-black hover:bg-white">
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Посмотреть проект
-                    </Button>
-                  </div>
-                </div>
               </div>
               
               <CardContent className="p-6">

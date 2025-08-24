@@ -65,63 +65,18 @@ export function ChatWidget({ className }: ChatWidgetProps) {
     }
   }, [messages]);
 
-  // Poll for new messages from n8n endpoint
-  useEffect(() => {
-    const pollForMessages = async () => {
-      try {
-        // Poll n8n endpoint for responses by session_id
-        const response = await fetch(
-          `https://my.flexnet.kz/webhook-test/get-responses/${sessionId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            }
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.messages && data.messages.length > 0) {
-            const newMessages = data.messages.map((msg: any) => ({
-              id: `bot_${Date.now()}_${Math.random()}`,
-              text: msg.text || msg.message,
-              isUser: false,
-              timestamp: new Date(),
-            }));
-
-            setMessages(prev => [...prev, ...newMessages]);
-            setIsTyping(false);
-          }
-        }
-      } catch (error) {
-        console.error('Error polling for messages:', error);
-        setIsTyping(false);
-      }
-    };
-
-    // Start polling when component mounts
-    pollingIntervalRef.current = window.setInterval(pollForMessages, 2000);
-
-    return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
-    };
-  }, [sessionId]);
+  // Note: Polling removed as endpoint doesn't exist yet
+  // Will need to implement webhook listening mechanism
 
   const sendToWebhook = async (userMessage: string) => {
     try {
       await fetch("https://my.flexnet.kz/webhook-test/acf44b2d-18c3-4bdf-b994-bee9899a22c7", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "text/plain",
         },
         mode: "no-cors",
-        body: JSON.stringify({
-          session_id: sessionId,
-          message: userMessage,
-        }),
+        body: userMessage, // Отправляем только текст сообщения
       });
     } catch (error) {
       console.error("Failed to send to webhook:", error);
@@ -144,10 +99,10 @@ export function ChatWidget({ className }: ChatWidgetProps) {
     setIsTyping(true);
 
     try {
-      // Send user message to n8n webhook immediately
+      // Отправляем сообщение в n8n webhook
       await sendToWebhook(userMessage.text);
       
-      // No bot reply - just stop typing indicator
+      // Убираем typing indicator так как polling не работает
       setIsTyping(false);
     } catch (error) {
       setIsTyping(false);

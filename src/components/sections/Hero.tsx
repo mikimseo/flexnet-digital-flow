@@ -10,29 +10,29 @@ export function Hero() {
     >
       {/* Background decorations */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-      <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute top-20 left-10 sm:left-20 w-48 sm:w-72 h-48 sm:h-72 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-20 right-10 sm:right-20 w-64 sm:w-96 h-64 sm:h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       
-      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
         {/* Left side - Content */}
         <div className="animate-fade-in">
           <div className="flex items-center gap-2 mb-6">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <span className="text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
+            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <span className="text-xs sm:text-sm font-medium text-primary bg-primary/10 px-2 sm:px-3 py-1 rounded-full">
               Digital-агентство полного цикла
             </span>
           </div>
           
-          <h1 className="text-4xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-6xl font-bold text-foreground mb-6 leading-tight">
             <span className="gradient-text">FLEXNET</span> —<br />
             Digital-агентство:<br />
-            <span className="text-3xl lg:text-5xl">
+            <span className="text-xl sm:text-2xl lg:text-3xl xl:text-5xl">
               сайты, ИИ-интеграции,<br />
               CRM и рост продаж
             </span>
           </h1>
           
-          <p className="text-lg lg:text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed">
             Создаём сайты и внедряем ИИ-агентов, автоматизируем маркетинг и продажи 
             для устойчивого роста вашего бизнеса.
           </p>
@@ -53,18 +53,18 @@ export function Hero() {
           </div>
           
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border">
+          <div className="grid grid-cols-3 gap-3 sm:gap-6 pt-8 border-t border-border">
             <div>
-              <div className="text-2xl lg:text-3xl font-bold text-primary">50+</div>
-              <div className="text-sm text-muted-foreground">Успешных проектов</div>
+              <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-primary">50+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Успешных проектов</div>
             </div>
             <div>
-              <div className="text-2xl lg:text-3xl font-bold text-primary">98%</div>
-              <div className="text-sm text-muted-foreground">Довольных клиентов</div>
+              <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-primary">98%</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Довольных клиентов</div>
             </div>
             <div>
-              <div className="text-2xl lg:text-3xl font-bold text-primary">24/7</div>
-              <div className="text-sm text-muted-foreground">Поддержка</div>
+              <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-primary">24/7</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Поддержка</div>
             </div>
           </div>
         </div>

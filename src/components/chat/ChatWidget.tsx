@@ -101,6 +101,9 @@ export function ChatWidget({ className }: ChatWidgetProps) {
     setIsTyping(true);
 
     try {
+      // Send user message to n8n webhook immediately
+      await sendToWebhook(userMessage.text, "");
+
       // Mock API call - replace with actual API integration
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -113,11 +116,11 @@ export function ChatWidget({ className }: ChatWidgetProps) {
         }),
       });
 
-      let botReply = "Спасибо за ваш вопрос! Наш менеджер свяжется с вами в ближайшее время.";
+      let botReply = "";
       
       if (response.ok) {
         const data = await response.json();
-        botReply = data.reply || botReply;
+        botReply = data.reply || "";
       } else {
         // Fallback responses for demo
         if (userMessage.text.toLowerCase().includes("сайт")) {
@@ -126,23 +129,29 @@ export function ChatWidget({ className }: ChatWidgetProps) {
           botReply = "Стоимость зависит от сложности проекта. Лендинг от 150,000 тенге, корпоративный сайт от 300,000 тенге. Хотите получить точную оценку? Расскажите подробнее о задаче.";
         } else if (userMessage.text.toLowerCase().includes("срок")) {
           botReply = "Сроки разработки: лендинг 1-2 недели, корпоративный сайт 3-4 недели, интернет-магазин 4-6 недель. Всё зависит от технических требований.";
+        } else {
+          // No default response - message will be sent to webhook only
+          setIsTyping(false);
+          return;
         }
       }
 
-      // Send to webhook
-      await sendToWebhook(userMessage.text, botReply);
-
-      // Simulate typing delay
-      setTimeout(() => {
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: botReply,
-          isUser: false,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, assistantMessage]);
+      // Only show bot reply if there is one
+      if (botReply) {
+        // Simulate typing delay
+        setTimeout(() => {
+          const assistantMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            text: botReply,
+            isUser: false,
+            timestamp: new Date(),
+          };
+          setMessages((prev) => [...prev, assistantMessage]);
+          setIsTyping(false);
+        }, 1500);
+      } else {
         setIsTyping(false);
-      }, 1500);
+      }
     } catch (error) {
       setIsTyping(false);
       const errorMessage: Message = {

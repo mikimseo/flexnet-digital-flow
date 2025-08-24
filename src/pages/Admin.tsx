@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CompaniesManager } from '@/components/admin/CompaniesManager';
 import { ServicesManager } from '@/components/admin/ServicesManager';
 import { PortfolioManager } from '@/components/admin/PortfolioManager';
+import { ReviewsManager } from '@/components/admin/ReviewsManager';
 import { LogOut, Settings } from 'lucide-react';
 
 export default function Admin() {
@@ -55,10 +56,11 @@ export default function Admin() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="companies" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="companies">Компании</TabsTrigger>
             <TabsTrigger value="services">Услуги</TabsTrigger>
             <TabsTrigger value="portfolio">Портфолио</TabsTrigger>
+            <TabsTrigger value="reviews">Отзывы</TabsTrigger>
           </TabsList>
           
           <TabsContent value="companies" className="mt-6">
@@ -71,6 +73,10 @@ export default function Admin() {
           
           <TabsContent value="portfolio" className="mt-6">
             <PortfolioManager />
+          </TabsContent>
+          
+          <TabsContent value="reviews" className="mt-6">
+            <ReviewsManager />
           </TabsContent>
         </Tabs>
       </main>

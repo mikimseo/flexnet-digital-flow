@@ -44,13 +44,23 @@ export function Header() {
           {/* Desktop navigation */}
           <div className="hidden lg:flex lg:gap-x-8">
             {navigation.map((item) => (
-              <a
-                key={item.key}
-                href={item.href}
-                className="text-sm font-medium leading-6 text-foreground hover:text-primary transition-colors"
-              >
-                {item.name}
-              </a>
+              item.href.startsWith('#') ? (
+                <a
+                  key={item.key}
+                  href={item.href}
+                  className="text-sm font-medium leading-6 text-foreground hover:text-primary transition-colors"
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link
+                  key={item.key}
+                  to={item.href}
+                  className="text-sm font-medium leading-6 text-foreground hover:text-primary transition-colors"
+                >
+                  {item.name}
+                </Link>
+              )
             ))}
           </div>
 
@@ -114,14 +124,25 @@ export function Header() {
             <div className="-my-6 divide-y divide-border">
               <div className="space-y-2 py-6">
                 {navigation.map((item) => (
-                  <a
-                    key={item.key}
-                    href={item.href}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-foreground hover:bg-muted"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </a>
+                  item.href.startsWith('#') ? (
+                    <a
+                      key={item.key}
+                      href={item.href}
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-foreground hover:bg-muted"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {item.name}
+                    </a>
+                  ) : (
+                    <Link
+                      key={item.key}
+                      to={item.href}
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-foreground hover:bg-muted"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  )
                 ))}
               </div>
               <div className="py-6 space-y-4">

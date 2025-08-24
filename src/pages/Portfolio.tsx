@@ -320,8 +320,8 @@ export default function Portfolio() {
               <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
                 Обсудим ваши идеи и создадим решение, которое превзойдет ожидания
               </p>
-              <Button size="lg" className="btn-gradient">
-                Обсудить ваш проект
+              <Button size="lg" className="btn-gradient" asChild>
+                <a href="#contacts">Обсудить ваш проект</a>
               </Button>
             </div>
           </div>

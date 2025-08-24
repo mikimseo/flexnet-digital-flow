@@ -6,6 +6,7 @@ export default defineConfig({
     outDir: 'dist'
   },
   server: {
+    port: 8080,
     open: '/index.php'
   }
 })

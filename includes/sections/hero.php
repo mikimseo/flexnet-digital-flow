@@ -1,7 +1,7 @@
 <?php
 // Hero Section
 ?>
-<section id="hero" class="hero">
+<div class="hero">
     <div class="container">
         <div class="hero-content animate-fade-in">
             <h1 class="hero-title">
@@ -23,4 +23,4 @@
             </div>
         </div>
     </div>
-</section>
+</div>

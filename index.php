@@ -76,22 +76,30 @@ ob_start();
     <!-- Main Content -->
     <main class="main-content">
         <!-- Hero Section -->
-        <?php include __DIR__ . '/includes/sections/hero.php'; ?>
+        <section id="home">
+            <?php include __DIR__ . '/includes/sections/hero.php'; ?>
+        </section>
         
         <!-- Client Logos Section -->
         <?php include __DIR__ . '/includes/sections/client-logos.php'; ?>
         
         <!-- Services Section -->
-        <?php include __DIR__ . '/includes/sections/services.php'; ?>
+        <section id="services">
+            <?php include __DIR__ . '/includes/sections/services.php'; ?>
+        </section>
         
         <!-- Portfolio Section -->
-        <?php include __DIR__ . '/includes/sections/portfolio.php'; ?>
+        <section id="portfolio">
+            <?php include __DIR__ . '/includes/sections/portfolio.php'; ?>
+        </section>
         
         <!-- Reviews Section -->
         <?php include __DIR__ . '/includes/sections/reviews.php'; ?>
         
         <!-- Contacts Section -->
-        <?php include __DIR__ . '/includes/sections/contacts.php'; ?>
+        <section id="contacts">
+            <?php include __DIR__ . '/includes/sections/contacts.php'; ?>
+        </section>
     </main>
     
     <!-- Footer -->
@@ -123,6 +131,7 @@ ob_start();
     <!-- JavaScript -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/mobile-nav.js"></script>
     <script src="/assets/js/chat.js"></script>
     <script src="/assets/js/pwa.js"></script>
     

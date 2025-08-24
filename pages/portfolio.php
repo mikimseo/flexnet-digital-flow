@@ -1,40 +1,53 @@
-<!-- Portfolio Hero -->
-<section class="page-hero">
+<?php
+// Portfolio Page - All Projects
+$portfolioItems = getPortfolioItems();
+?>
+<div class="portfolio-page">
     <div class="container">
-        <div class="page-hero-content">
-            <h1 class="page-title">Портфолио</h1>
-            <p class="page-description">
-                Примеры наших успешных проектов в различных сферах
-            </p>
+        <div class="section-header">
+            <h1 class="section-title">Все проекты</h1>
+            <p class="section-description">Полное портфолио наших успешных проектов</p>
         </div>
-    </div>
-</section>
-
-<!-- Portfolio Grid -->
-<section class="portfolio-section">
-    <div class="container">
+        
         <div class="portfolio-grid">
-            <?php foreach (getPortfolioItems() as $item): ?>
-            <div class="portfolio-item">
-                <div class="portfolio-image">
-                    <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['title']; ?>" loading="lazy">
-                    <div class="portfolio-overlay">
-                        <a href="<?php echo $item['url']; ?>" class="portfolio-link" target="_blank">
-                            <i data-lucide="external-link"></i>
-                        </a>
+            <?php foreach ($portfolioItems as $item): ?>
+                <div class="portfolio-card card">
+                    <?php if (!empty($item['image'])): ?>
+                        <img src="<?php echo htmlspecialchars($item['image']); ?>" 
+                             alt="<?php echo htmlspecialchars($item['title']); ?>" 
+                             loading="lazy">
+                    <?php endif; ?>
+                    
+                    <div class="content">
+                        <h3><?php echo htmlspecialchars($item['title']); ?></h3>
+                        <p><?php echo htmlspecialchars($item['description']); ?></p>
+                        
+                        <?php if (!empty($item['technologies'])): ?>
+                            <div class="tags">
+                                <?php foreach ($item['technologies'] as $tech): ?>
+                                    <span class="tag"><?php echo htmlspecialchars($tech); ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div class="card-actions">
+                            <?php if (!empty($item['url'])): ?>
+                                <a href="<?php echo htmlspecialchars($item['url']); ?>" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   class="btn btn-primary btn-sm">
+                                    <i data-lucide="external-link"></i>
+                                    Смотреть
+                                </a>
+                            <?php endif; ?>
+                            <a href="#contacts" class="btn btn-outline btn-sm">
+                                <i data-lucide="phone"></i>
+                                Обсудить
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <div class="portfolio-content">
-                    <h3 class="portfolio-title"><?php echo $item['title']; ?></h3>
-                    <p class="portfolio-description"><?php echo $item['description']; ?></p>
-                    <div class="portfolio-technologies">
-                        <?php foreach ($item['technologies'] as $tech): ?>
-                        <span class="tech-tag"><?php echo $tech; ?></span>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </div>
             <?php endforeach; ?>
         </div>
     </div>
-</section>
+</div>

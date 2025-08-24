@@ -201,9 +201,6 @@ export function Portfolio() {
         </div>
 
         <div className="text-center mt-12">
-          <Button size="lg" variant="outline" className="mr-4" asChild>
-            <Link to="/portfolio">Все проекты</Link>
-          </Button>
           <Button size="lg" className="btn-gradient" asChild>
             <a href="#contacts">Обсудить ваш проект</a>
           </Button>

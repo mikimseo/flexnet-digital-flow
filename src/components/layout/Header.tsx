@@ -21,7 +21,7 @@ interface MenuItem {
 const fallbackNavigation = [
   { name: "Главная", href: "#hero", key: "home" },
   { name: "Услуги", href: "#services", key: "services" },
-  { name: "Портфолио", href: "/portfolio", key: "portfolio" },
+  { name: "Портфолио", href: "#portfolio", key: "portfolio" },
   { name: "Отзывы", href: "#reviews", key: "reviews" },
   { name: "Контакты", href: "#contacts", key: "contacts" },
 ];

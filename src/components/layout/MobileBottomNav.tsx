@@ -20,9 +20,9 @@ const navItems = [
   {
     key: "portfolio",
     label: "Портфолио", 
-    href: "/portfolio",
+    href: "#portfolio",
     icon: Folder,
-    external: false
+    external: true
   },
   {
     key: "contacts",

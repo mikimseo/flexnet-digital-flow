@@ -1,12 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Menu, X, Instagram, Music, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
-const navigation = [
+interface MenuItem {
+  id: string;
+  name: string;
+  href: string;
+  key: string;
+  is_external: boolean;
+  is_active: boolean;
+  display_order: number;
+}
+
+// Fallback navigation items
+const fallbackNavigation = [
   { name: "Главная", href: "#hero", key: "home" },
   { name: "Услуги", href: "#services", key: "services" },
   { name: "Портфолио", href: "/portfolio", key: "portfolio" },
@@ -16,7 +28,37 @@ const navigation = [
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [navigation, setNavigation] = useState(fallbackNavigation);
   const { user, isAdmin } = useAuth();
+
+  useEffect(() => {
+    fetchMenuItems();
+  }, []);
+
+  const fetchMenuItems = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('menu_items')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order');
+
+      if (error) throw error;
+      
+      // Use DB data if available, otherwise fallback
+      if (data && data.length > 0) {
+        const menuItems = data.map((item: MenuItem) => ({
+          name: item.name,
+          href: item.href,
+          key: item.key
+        }));
+        setNavigation(menuItems);
+      }
+    } catch (error) {
+      console.error('Error fetching menu items:', error);
+      // Keep fallback navigation on error
+    }
+  };
 
   return (
     <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/50">

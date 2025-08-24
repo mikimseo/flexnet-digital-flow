@@ -27,15 +27,37 @@
    npm run build
    ```
 2. Загрузите содержимое папки `dist/` в корневую папку сайта
-3. Загрузите PHP файлы:
+3. Загрузите PHP файлы и конфигурацию:
    - `config/database.php` → `/config/database.php`
-   - `api-examples/*.php` → `/api/*.php`
+   - `api-examples/*.php` → `/api/*.php` (переименуйте файлы, убрав "-examples")
+   - `.htaccess` → `/.htaccess`
 
 ### Шаг 3: Настройка структуры папок
+После сборки проекта (`npm run build`) папка `dist/` будет содержать:
+```
+/dist/
+├── index.html
+├── assets/
+│   ├── index-[hash].js
+│   ├── index-[hash].css
+│   └── [другие ресурсы]
+├── manifest.json
+├── sw.js
+├── pwa-192x192.png
+├── pwa-512x512.png
+└── robots.txt
+```
+
+Загрузите всё содержимое `dist/` в корень сайта, плюс добавьте:
 ```
 /public_html/
 ├── index.html (из dist/)
 ├── assets/ (из dist/)
+├── manifest.json (из dist/)
+├── sw.js (из dist/)
+├── *.png (из dist/)
+├── robots.txt (из dist/)
+├── .htaccess
 ├── config/
 │   └── database.php
 └── api/

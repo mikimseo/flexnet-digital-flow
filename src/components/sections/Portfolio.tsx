@@ -204,8 +204,8 @@ export function Portfolio() {
           <Button size="lg" variant="outline" className="mr-4" asChild>
             <Link to="/portfolio">Все проекты</Link>
           </Button>
-          <Button size="lg" className="btn-gradient">
-            Обсудить ваш проект
+          <Button size="lg" className="btn-gradient" asChild>
+            <a href="#contacts">Обсудить ваш проект</a>
           </Button>
         </div>
       </div>

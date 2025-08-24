@@ -53,9 +53,9 @@ ob_start();
     <meta property="og:image" content="/icons/icon-512x512.png">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="/public/assets/css/style.css">
-    <link rel="stylesheet" href="/public/assets/css/responsive.css">
-    <link rel="stylesheet" href="/public/assets/css/components.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/responsive.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -64,7 +64,7 @@ ob_start();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
     <link rel="canonical" href="<?php echo getCurrentURL(); ?>">
 </head>
@@ -122,9 +122,9 @@ ob_start();
     
     <!-- JavaScript -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="/public/assets/js/main.js"></script>
-    <script src="/public/assets/js/chat.js"></script>
-    <script src="/public/assets/js/pwa.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/chat.js"></script>
+    <script src="/assets/js/pwa.js"></script>
     
     <script>
         // Initialize Lucide icons

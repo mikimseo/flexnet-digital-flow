@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -200,8 +201,8 @@ export function Portfolio() {
         </div>
 
         <div className="text-center mt-12">
-          <Button size="lg" variant="outline" className="mr-4">
-            Все проекты
+          <Button size="lg" variant="outline" className="mr-4" asChild>
+            <Link to="/portfolio">Все проекты</Link>
           </Button>
           <Button size="lg" className="btn-gradient">
             Обсудить ваш проект

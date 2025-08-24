@@ -65,8 +65,47 @@ export function ChatWidget({ className }: ChatWidgetProps) {
     }
   }, [messages]);
 
-  // Note: Polling removed as endpoint doesn't exist yet
-  // Will need to implement webhook listening mechanism
+  // Poll for new messages from response endpoint
+  useEffect(() => {
+    const pollForMessages = async () => {
+      try {
+        const response = await fetch(
+          `https://kqfsypshyzovjwrrmibu.supabase.co/functions/v1/chat-response?session_id=${sessionId}`,
+          {
+            headers: {
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxZnN5cHNoeXpvdmp3cnJtaWJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MDAwODUsImV4cCI6MjA3MTQ3NjA4NX0.p6L2ZRZSiimiiyikdVQjk2A79uhHsc89Zv5-kmpwd_U`,
+            }
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.messages && data.messages.length > 0) {
+            const newMessages = data.messages.map((msg: any) => ({
+              id: msg.id,
+              text: msg.text,
+              isUser: false,
+              timestamp: new Date(msg.timestamp),
+            }));
+
+            setMessages(prev => [...prev, ...newMessages]);
+            setIsTyping(false);
+          }
+        }
+      } catch (error) {
+        console.error('Error polling for messages:', error);
+      }
+    };
+
+    // Start polling
+    pollingIntervalRef.current = window.setInterval(pollForMessages, 2000);
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [sessionId]);
 
   const sendToWebhook = async (userMessage: string) => {
     try {
@@ -74,9 +113,10 @@ export function ChatWidget({ className }: ChatWidgetProps) {
         method: "POST",
         headers: {
           "Content-Type": "text/plain",
+          "X-Session-ID": sessionId, // Добавляем session_id в заголовок
         },
         mode: "no-cors",
-        body: userMessage, // Отправляем только текст сообщения
+        body: userMessage,
       });
     } catch (error) {
       console.error("Failed to send to webhook:", error);
@@ -102,8 +142,8 @@ export function ChatWidget({ className }: ChatWidgetProps) {
       // Отправляем сообщение в n8n webhook
       await sendToWebhook(userMessage.text);
       
-      // Убираем typing indicator так как polling не работает
-      setIsTyping(false);
+      // Показываем typing indicator
+      setIsTyping(true);
     } catch (error) {
       setIsTyping(false);
       console.error("Failed to send message:", error);

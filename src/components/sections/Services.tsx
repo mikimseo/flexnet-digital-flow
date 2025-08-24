@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -11,13 +12,28 @@ import {
   BarChart3,
   ArrowRight,
   Zap,
-  Check
+  Check,
+  icons
 } from "lucide-react";
-import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-const services = [
+interface Service {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  features: string[];
+  price?: string;
+  slug?: string;
+  is_active: boolean;
+  display_order: number;
+}
+
+// Fallback services data
+const fallbackServices = [
   {
-    icon: Globe,
+    id: "1",
+    icon: "Globe",
     title: "Разработка сайтов",
     description: "Лендинги, корпоративные сайты и интернет-магазины с современным дизайном и высокой конверсией",
     detailedDescription: "Создаем продающие лендинги, корпоративные сайты и интернет-магазины с современным дизайном. Все сайты адаптированы под мобильные устройства, оптимизированы для поисковых систем и загружаются максимально быстро. Используем современные технологии: React, TypeScript, Tailwind CSS для frontend и Node.js, PostgreSQL для backend.",
@@ -33,10 +49,13 @@ const services = [
       "Техническая поддержка 24/7"
     ],
     price: "от 150,000 ₸",
-    slug: "web-development"
+    slug: "web-development",
+    is_active: true,
+    display_order: 1
   },
   {
-    icon: Bot,
+    id: "2",
+    icon: "Bot",
     title: "Интеграция ИИ-агентов",
     description: "Чат-боты и виртуальные ассистенты для автоматизации клиентского сервиса и увеличения продаж",
     detailedDescription: "Внедряем умных ИИ-агентов для автоматизации клиентского сервиса. Наши чат-боты работают 24/7, обрабатывают заявки, квалифицируют лиды и передают горячих клиентов менеджерам. Используем современные языковые модели и интегрируем с вашими системами.",
@@ -52,10 +71,13 @@ const services = [
       "Постоянное улучшение алгоритмов"
     ],
     price: "от 200,000 ₸",
-    slug: "ai-integration"
+    slug: "ai-integration",
+    is_active: true,
+    display_order: 2
   },
   {
-    icon: Settings,
+    id: "3",
+    icon: "Settings",
     title: "Внедрение CRM",
     description: "Настройка CRM-систем для управления клиентами, автоматизации продаж и маркетинга",
     detailedDescription: "Внедряем и настраиваем CRM-системы под ваши бизнес-процессы. Автоматизируем продажи, маркетинг и клиентский сервис. Интегрируем с существующими системами и обучаем команду работе с новым инструментом.",
@@ -71,10 +93,13 @@ const services = [
       "Постоянная техническая поддержка"
     ],
     price: "от 300,000 ₸",
-    slug: "crm-implementation"
+    slug: "crm-implementation",
+    is_active: true,
+    display_order: 3
   },
   {
-    icon: TrendingUp,
+    id: "4",
+    icon: "TrendingUp",
     title: "SEO и Analytics",
     description: "Поисковое продвижение и аналитика для увеличения трафика и конверсий",
     detailedDescription: "Комплексное SEO-продвижение и настройка аналитики для роста органического трафика. Проводим технический аудит, оптимизируем контент, настраиваем аналитику и отслеживаем результаты.",
@@ -90,10 +115,13 @@ const services = [
       "Консультации по контент-стратегии"
     ],
     price: "от 100,000 ₸/мес",
-    slug: "seo-analytics"
+    slug: "seo-analytics",
+    is_active: true,
+    display_order: 4
   },
   {
-    icon: Smartphone,
+    id: "5",
+    icon: "Smartphone",
     title: "PWA и мобильные решения",
     description: "Прогрессивные веб-приложения и мобильные решения для лучшего пользовательского опыта",
     detailedDescription: "Создаем прогрессивные веб-приложения (PWA), которые работают как нативные мобильные приложения. Пользователи могут устанавливать их на устройства, получать push-уведомления и работать офлайн.",
@@ -109,10 +137,13 @@ const services = [
       "Тестирование на всех устройствах"
     ],
     price: "от 250,000 ₸",
-    slug: "mobile-pwa"
+    slug: "mobile-pwa",
+    is_active: true,
+    display_order: 5
   },
   {
-    icon: BarChart3,
+    id: "6",
+    icon: "BarChart3",
     title: "Аналитика и оптимизация",
     description: "Анализ данных, A/B тестирование и оптимизация конверсий для роста бизнеса",
     detailedDescription: "Настраиваем системы аналитики и проводим A/B тестирование для оптимизации конверсий. Анализируем поведение пользователей, выявляем точки роста и внедряем улучшения.",
@@ -128,11 +159,61 @@ const services = [
       "Мониторинг KPI в реальном времени"
     ],
     price: "от 80,000 ₸/мес",
-    slug: "analytics-optimization"
+    slug: "analytics-optimization",
+    is_active: true,
+    display_order: 6
   }
 ];
 
+const iconMapping: { [key: string]: any } = {
+  Globe,
+  Bot,
+  Settings,
+  TrendingUp,
+  Smartphone,
+  BarChart3
+};
+
 export function Services() {
+  const [services, setServices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order');
+
+      if (error) throw error;
+      
+      // Use DB data if available, otherwise fallback
+      const servicesData = data && data.length > 0 ? data : fallbackServices;
+      setServices(servicesData);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      setServices(fallbackServices);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <section id="services" className="py-20 bg-background">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section id="services" className="py-20 bg-background">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -151,10 +232,13 @@ export function Services() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => {
-            const Icon = service.icon;
+            const IconComponent = iconMapping[service.icon] || Globe;
+            const detailedDescription = service.detailedDescription || service.description;
+            const detailedFeatures = service.detailedFeatures || service.features;
+            
             return (
               <Card 
-                key={service.slug}
+                key={service.id || service.slug}
                 className="group card-hover bg-gradient-card border-border/50"
                 style={{
                   animationDelay: `${index * 100}ms`
@@ -163,7 +247,7 @@ export function Services() {
                 <CardHeader>
                   <div className="flex items-center gap-4 mb-4">
                     <div className="p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                      <Icon className="h-6 w-6" />
+                      <IconComponent className="h-6 w-6" />
                     </div>
                     <div className="text-sm font-medium text-primary">
                       {service.price}
@@ -197,7 +281,7 @@ export function Services() {
                       <DialogHeader>
                         <div className="flex items-center gap-3 mb-4">
                           <div className="p-3 rounded-lg bg-primary/10 text-primary">
-                            <Icon className="h-6 w-6" />
+                            <IconComponent className="h-6 w-6" />
                           </div>
                           <Badge variant="secondary" className="text-primary">
                             {service.price}
@@ -205,14 +289,14 @@ export function Services() {
                         </div>
                         <DialogTitle className="text-2xl text-left">{service.title}</DialogTitle>
                         <DialogDescription className="text-left text-base leading-relaxed">
-                          {service.detailedDescription}
+                          {detailedDescription}
                         </DialogDescription>
                       </DialogHeader>
                       
                       <div className="mt-6">
                         <h4 className="font-semibold text-lg mb-4">Что входит в услугу:</h4>
                         <div className="grid grid-cols-1 gap-3">
-                          {service.detailedFeatures.map((feature, idx) => (
+                          {detailedFeatures.map((feature: string, idx: number) => (
                             <div key={idx} className="flex items-start gap-3">
                               <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                               <span className="text-sm">{feature}</span>

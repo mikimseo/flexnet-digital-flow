@@ -63,7 +63,7 @@ export function ChatWidget({ className }: ChatWidgetProps) {
     }
   }, [messages]);
 
-  const sendToWebhook = async (userMessage: string, botReply: string) => {
+  const sendToWebhook = async (userMessage: string) => {
     try {
       await fetch("https://my.flexnet.kz/webhook-test/acf44b2d-18c3-4bdf-b994-bee9899a22c7", {
         method: "POST",
@@ -72,12 +72,7 @@ export function ChatWidget({ className }: ChatWidgetProps) {
         },
         mode: "no-cors",
         body: JSON.stringify({
-          timestamp: new Date().toISOString(),
-          user_message: userMessage,
-          bot_reply: botReply,
-          session_id: "demo-session",
-          source: "flexnet-chat-widget",
-          triggered_from: window.location.origin,
+          message: userMessage,
         }),
       });
     } catch (error) {
@@ -102,65 +97,13 @@ export function ChatWidget({ className }: ChatWidgetProps) {
 
     try {
       // Send user message to n8n webhook immediately
-      await sendToWebhook(userMessage.text, "");
-
-      // Mock API call - replace with actual API integration
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: userMessage.text,
-          sessionId: "demo-session",
-        }),
-      });
-
-      let botReply = "";
+      await sendToWebhook(userMessage.text);
       
-      if (response.ok) {
-        const data = await response.json();
-        botReply = data.reply || "";
-      } else {
-        // Fallback responses for demo
-        if (userMessage.text.toLowerCase().includes("сайт")) {
-          botReply = "Отлично! Мы специализируемся на создании современных сайтов. Какой тип сайта вас интересует: лендинг, корпоративный сайт или интернет-магазин?";
-        } else if (userMessage.text.toLowerCase().includes("цена") || userMessage.text.toLowerCase().includes("стоимость")) {
-          botReply = "Стоимость зависит от сложности проекта. Лендинг от 150,000 тенге, корпоративный сайт от 300,000 тенге. Хотите получить точную оценку? Расскажите подробнее о задаче.";
-        } else if (userMessage.text.toLowerCase().includes("срок")) {
-          botReply = "Сроки разработки: лендинг 1-2 недели, корпоративный сайт 3-4 недели, интернет-магазин 4-6 недель. Всё зависит от технических требований.";
-        } else {
-          // No default response - message will be sent to webhook only
-          setIsTyping(false);
-          return;
-        }
-      }
-
-      // Only show bot reply if there is one
-      if (botReply) {
-        // Simulate typing delay
-        setTimeout(() => {
-          const assistantMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            text: botReply,
-            isUser: false,
-            timestamp: new Date(),
-          };
-          setMessages((prev) => [...prev, assistantMessage]);
-          setIsTyping(false);
-        }, 1500);
-      } else {
-        setIsTyping(false);
-      }
+      // No bot reply - just stop typing indicator
+      setIsTyping(false);
     } catch (error) {
       setIsTyping(false);
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "Извините, произошла ошибка. Попробуйте позже или свяжитесь с нами напрямую.",
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      console.error("Failed to send message:", error);
     }
   };
 

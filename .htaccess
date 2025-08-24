@@ -35,7 +35,7 @@ RedirectMatch 403 ^/logs/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/api/
-RewriteRule ^(.*)$ /index.php [QSA,L]
+RewriteRule ^(.*)$ /public/index.php [QSA,L]
 
 # Cache static assets
 <IfModule mod_expires.c>

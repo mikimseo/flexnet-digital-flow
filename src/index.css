@@ -2,72 +2,118 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
 @layer base {
   :root {
-    /* FlexNet Brand Colors - HSL format */
+    /* FLEXNET Brand Colors */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-    
+
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-    
+
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    
+
     /* Brand Primary - Tech Blue */
     --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-    
+    --primary-glow: 217 91% 70%;
+
     /* Brand Secondary - Dark Blue */
     --secondary: 222 47% 11%;
     --secondary-foreground: 0 0% 100%;
-    
+
     --muted: 220 14% 96%;
     --muted-foreground: 215 16% 47%;
-    
+
     /* Brand Accent - Purple */
     --accent: 271 76% 53%;
     --accent-foreground: 0 0% 100%;
-    
+
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    
+
     --border: 220 13% 91%;
     --input: 220 13% 91%;
     --ring: 217 91% 60%;
-    
+
     --radius: 0.75rem;
+
+    /* Custom gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.05), hsl(var(--accent) / 0.05));
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(var(--muted)));
+
+    /* Shadows */
+    --shadow-glow: 0 20px 40px -10px hsl(var(--primary) / 0.3);
+    --shadow-card: 0 4px 6px -1px hsl(var(--foreground) / 0.1);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
-  
+
   .dark {
-    /* Dark theme for FlexNet */
+    /* Dark theme for FLEXNET */
     --background: 222 47% 5%;
     --foreground: 0 0% 98%;
-    
+
     --card: 222 47% 8%;
     --card-foreground: 0 0% 98%;
-    
+
     --popover: 222 47% 8%;
     --popover-foreground: 0 0% 98%;
-    
+
     --primary: 217 91% 65%;
     --primary-foreground: 222 47% 5%;
-    
+    --primary-glow: 217 91% 75%;
+
     --secondary: 217 33% 18%;
     --secondary-foreground: 0 0% 98%;
-    
+
     --muted: 217 33% 15%;
     --muted-foreground: 215 20% 65%;
-    
+
     --accent: 271 76% 58%;
     --accent-foreground: 0 0% 98%;
-    
+
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
-    
+
     --border: 217 33% 18%;
     --input: 217 33% 18%;
     --ring: 217 91% 65%;
+
+    /* Dark gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.1));
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(var(--muted)));
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -75,19 +121,49 @@
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 }
 
 @layer components {
-  /* Interactive Elements */
-  .story-link {
-    @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-300;
   }
-  
-  .hover-scale {
-    @apply transition-transform duration-200 hover:scale-105;
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors duration-300;
+  }
+
+  .btn-gradient {
+    @apply bg-gradient-to-r from-primary to-accent text-white hover:shadow-glow transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply hover:shadow-card hover:-translate-y-1 transition-all duration-300;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }

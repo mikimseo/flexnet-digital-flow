@@ -65,15 +65,17 @@ export function ChatWidget({ className }: ChatWidgetProps) {
     }
   }, [messages]);
 
-  // Poll for new messages from n8n
+  // Poll for new messages from n8n endpoint
   useEffect(() => {
     const pollForMessages = async () => {
       try {
+        // Poll n8n endpoint for responses by session_id
         const response = await fetch(
-          `https://kqfsypshyzovjwrrmibu.supabase.co/functions/v1/chat-webhook?session_id=${sessionId}`,
+          `https://my.flexnet.kz/webhook-test/get-responses/${sessionId}`,
           {
+            method: "GET",
             headers: {
-              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxZnN5cHNoeXpvdmp3cnJtaWJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MDAwODUsImV4cCI6MjA3MTQ3NjA4NX0.p6L2ZRZSiimiiyikdVQjk2A79uhHsc89Zv5-kmpwd_U`,
+              "Content-Type": "application/json",
             }
           }
         );
@@ -82,10 +84,10 @@ export function ChatWidget({ className }: ChatWidgetProps) {
           const data = await response.json();
           if (data.messages && data.messages.length > 0) {
             const newMessages = data.messages.map((msg: any) => ({
-              id: msg.id,
-              text: msg.message_text,
+              id: `bot_${Date.now()}_${Math.random()}`,
+              text: msg.text || msg.message,
               isUser: false,
-              timestamp: new Date(msg.created_at),
+              timestamp: new Date(),
             }));
 
             setMessages(prev => [...prev, ...newMessages]);
@@ -94,6 +96,7 @@ export function ChatWidget({ className }: ChatWidgetProps) {
         }
       } catch (error) {
         console.error('Error polling for messages:', error);
+        setIsTyping(false);
       }
     };
 

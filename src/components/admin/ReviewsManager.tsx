@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Edit, Trash2, Plus, Star } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface Review {
@@ -22,8 +21,6 @@ interface Review {
   project?: string;
   is_active: boolean;
   display_order: number;
-  created_at: string;
-  updated_at: string;
 }
 
 interface ReviewFormData {
@@ -37,9 +34,78 @@ interface ReviewFormData {
   display_order: number;
 }
 
+// Sample reviews data
+const sampleReviews: Review[] = [
+  {
+    id: "1",
+    name: "Алексей Петров",
+    position: "Директор по маркетингу",
+    company: "TechCorp",
+    text: "Отличная работа! Сайт превзошел все ожидания. Конверсия выросла на 180%, а время загрузки сократилось в 3 раза. Команда очень профессиональная.",
+    rating: 5,
+    project: "Корпоративный сайт",
+    is_active: true,
+    display_order: 1
+  },
+  {
+    id: "2",
+    name: "Мария Иванова",
+    position: "CEO",
+    company: "StartupHub",
+    text: "Внедрили ИИ-чат бота для нашего интернет-магазина. Теперь 70% вопросов клиентов обрабатывается автоматически. Рекомендую!",
+    rating: 5,
+    project: "ИИ-интеграция для e-commerce",
+    is_active: true,
+    display_order: 2
+  },
+  {
+    id: "3",
+    name: "Дмитрий Козлов",
+    position: "Руководитель отдела продаж",
+    company: "SalesForce Pro",
+    text: "CRM система полностью автоматизировала наши процессы. Продуктивность команды выросла на 90%. Спасибо за качественную работу!",
+    rating: 5,
+    project: "CRM для агентства недвижимости",
+    is_active: true,
+    display_order: 3
+  },
+  {
+    id: "4",
+    name: "Анна Волкова",
+    position: "Маркетолог",
+    company: "EduTech",
+    text: "Лендинг для наших курсов показывает невероятные результаты - конверсия 12.4%! Это в 4 раза больше чем было раньше.",
+    rating: 5,
+    project: "Лендинг для IT-курсов",
+    is_active: true,
+    display_order: 4
+  },
+  {
+    id: "5",
+    name: "Сергей Морозов",
+    position: "Технический директор",
+    company: "LogisticsPro",
+    text: "PWA приложение работает как часы. 25000+ активных пользователей и рейтинг 4.8/5. Пользователи в восторге от скорости.",
+    rating: 5,
+    project: "Мобильное приложение доставки",
+    is_active: true,
+    display_order: 5
+  },
+  {
+    id: "6",
+    name: "Елена Смирнова",
+    position: "Владелец бизнеса",
+    company: "RetailChain",
+    text: "Благодаря SEO-оптимизации органический трафик вырос на 156%. Сайт теперь на первых позициях по ключевым запросам.",
+    rating: 5,
+    project: "SEO-продвижение",
+    is_active: true,
+    display_order: 6
+  }
+];
+
 export function ReviewsManager() {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState<Review[]>(sampleReviews);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingReview, setEditingReview] = useState<Review | null>(null);
   const [formData, setFormData] = useState<ReviewFormData>({
@@ -54,53 +120,28 @@ export function ReviewsManager() {
   });
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchReviews();
-  }, []);
-
-  const fetchReviews = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('reviews')
-        .select('*')
-        .order('display_order');
-
-      if (error) throw error;
-      setReviews(data || []);
-    } catch (error) {
-      console.error('Error fetching reviews:', error);
-      toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить отзывы",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       if (editingReview) {
-        const { error } = await supabase
-          .from('reviews')
-          .update(formData)
-          .eq('id', editingReview.id);
-
-        if (error) throw error;
+        setReviews(reviews.map(review => 
+          review.id === editingReview.id 
+            ? { ...review, ...formData }
+            : review
+        ));
         
         toast({
           title: "Успешно",
           description: "Отзыв обновлен",
         });
       } else {
-        const { error } = await supabase
-          .from('reviews')
-          .insert([formData]);
-
-        if (error) throw error;
+        const newReview: Review = {
+          ...formData,
+          id: Date.now().toString(),
+          is_active: true
+        };
+        setReviews([...reviews, newReview]);
         
         toast({
           title: "Успешно",
@@ -120,7 +161,6 @@ export function ReviewsManager() {
         project: "",
         display_order: 0
       });
-      fetchReviews();
     } catch (error) {
       console.error('Error saving review:', error);
       toast({
@@ -150,18 +190,12 @@ export function ReviewsManager() {
     if (!confirm("Вы уверены, что хотите удалить этот отзыв?")) return;
 
     try {
-      const { error } = await supabase
-        .from('reviews')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      setReviews(reviews.filter(review => review.id !== id));
       
       toast({
         title: "Успешно",
         description: "Отзыв удален",
       });
-      fetchReviews();
     } catch (error) {
       console.error('Error deleting review:', error);
       toast({
@@ -174,18 +208,16 @@ export function ReviewsManager() {
 
   const toggleActive = async (id: string, currentStatus: boolean) => {
     try {
-      const { error } = await supabase
-        .from('reviews')
-        .update({ is_active: !currentStatus })
-        .eq('id', id);
-
-      if (error) throw error;
+      setReviews(reviews.map(review => 
+        review.id === id 
+          ? { ...review, is_active: !currentStatus }
+          : review
+      ));
       
       toast({
         title: "Успешно",
         description: `Отзыв ${!currentStatus ? 'активирован' : 'деактивирован'}`,
       });
-      fetchReviews();
     } catch (error) {
       console.error('Error toggling review status:', error);
       toast({
@@ -206,14 +238,6 @@ export function ReviewsManager() {
       />
     ));
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   return (
     <Card>

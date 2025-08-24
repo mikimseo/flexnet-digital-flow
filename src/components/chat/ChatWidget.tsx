@@ -63,6 +63,28 @@ export function ChatWidget({ className }: ChatWidgetProps) {
     }
   }, [messages]);
 
+  const sendToWebhook = async (userMessage: string, botReply: string) => {
+    try {
+      await fetch("https://my.flexnet.kz/webhook-test/acf44b2d-18c3-4bdf-b994-bee9899a22c7", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "no-cors",
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          user_message: userMessage,
+          bot_reply: botReply,
+          session_id: "demo-session",
+          source: "flexnet-chat-widget",
+          triggered_from: window.location.origin,
+        }),
+      });
+    } catch (error) {
+      console.error("Failed to send to webhook:", error);
+    }
+  };
+
   const sendMessage = async (e?: React.FormEvent | React.MouseEvent) => {
     e?.preventDefault();
     if (!inputMessage.trim()) return;
@@ -106,6 +128,9 @@ export function ChatWidget({ className }: ChatWidgetProps) {
           botReply = "Сроки разработки: лендинг 1-2 недели, корпоративный сайт 3-4 недели, интернет-магазин 4-6 недель. Всё зависит от технических требований.";
         }
       }
+
+      // Send to webhook
+      await sendToWebhook(userMessage.text, botReply);
 
       // Simulate typing delay
       setTimeout(() => {

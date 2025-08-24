@@ -68,12 +68,10 @@ export function ChatWidget({ className }: ChatWidgetProps) {
       await fetch("https://my.flexnet.kz/webhook-test/acf44b2d-18c3-4bdf-b994-bee9899a22c7", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "text/plain",
         },
         mode: "no-cors",
-        body: JSON.stringify({
-          message: userMessage,
-        }),
+        body: userMessage,
       });
     } catch (error) {
       console.error("Failed to send to webhook:", error);

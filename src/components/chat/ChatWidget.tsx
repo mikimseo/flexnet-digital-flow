@@ -29,8 +29,10 @@ export function ChatWidget({ className }: ChatWidgetProps) {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const pollingIntervalRef = useRef<number | null>(null);
 
   // Load messages from localStorage on mount
   useEffect(() => {
@@ -63,15 +65,60 @@ export function ChatWidget({ className }: ChatWidgetProps) {
     }
   }, [messages]);
 
+  // Poll for new messages from n8n
+  useEffect(() => {
+    const pollForMessages = async () => {
+      try {
+        const response = await fetch(
+          `https://kqfsypshyzovjwrrmibu.supabase.co/functions/v1/chat-webhook?session_id=${sessionId}`,
+          {
+            headers: {
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxZnN5cHNoeXpvdmp3cnJtaWJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MDAwODUsImV4cCI6MjA3MTQ3NjA4NX0.p6L2ZRZSiimiiyikdVQjk2A79uhHsc89Zv5-kmpwd_U`,
+            }
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.messages && data.messages.length > 0) {
+            const newMessages = data.messages.map((msg: any) => ({
+              id: msg.id,
+              text: msg.message_text,
+              isUser: false,
+              timestamp: new Date(msg.created_at),
+            }));
+
+            setMessages(prev => [...prev, ...newMessages]);
+            setIsTyping(false);
+          }
+        }
+      } catch (error) {
+        console.error('Error polling for messages:', error);
+      }
+    };
+
+    // Start polling when component mounts
+    pollingIntervalRef.current = window.setInterval(pollForMessages, 2000);
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [sessionId]);
+
   const sendToWebhook = async (userMessage: string) => {
     try {
       await fetch("https://my.flexnet.kz/webhook-test/acf44b2d-18c3-4bdf-b994-bee9899a22c7", {
         method: "POST",
         headers: {
-          "Content-Type": "text/plain",
+          "Content-Type": "application/json",
         },
         mode: "no-cors",
-        body: userMessage,
+        body: JSON.stringify({
+          session_id: sessionId,
+          message: userMessage,
+        }),
       });
     } catch (error) {
       console.error("Failed to send to webhook:", error);

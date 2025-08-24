@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Edit, Trash2, Plus, Menu } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MenuItem {
   id: string;
@@ -18,6 +19,8 @@ interface MenuItem {
   is_external: boolean;
   is_active: boolean;
   display_order: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface MenuFormData {
@@ -28,57 +31,9 @@ interface MenuFormData {
   display_order: number;
 }
 
-// Sample menu data
-const sampleMenuItems: MenuItem[] = [
-  {
-    id: "1",
-    name: "Главная",
-    href: "#hero",
-    key: "home",
-    is_external: false,
-    is_active: true,
-    display_order: 1
-  },
-  {
-    id: "2",
-    name: "Услуги",
-    href: "#services",
-    key: "services",
-    is_external: false,
-    is_active: true,
-    display_order: 2
-  },
-  {
-    id: "3",
-    name: "Портфолио",
-    href: "/portfolio",
-    key: "portfolio",
-    is_external: false,
-    is_active: true,
-    display_order: 3
-  },
-  {
-    id: "4",
-    name: "Отзывы",
-    href: "#reviews",
-    key: "reviews",
-    is_external: false,
-    is_active: true,
-    display_order: 4
-  },
-  {
-    id: "5",
-    name: "Контакты",
-    href: "#contacts",
-    key: "contacts",
-    is_external: false,
-    is_active: true,
-    display_order: 5
-  }
-];
-
 export function MenuManager() {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>(sampleMenuItems);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [formData, setFormData] = useState<MenuFormData>({
@@ -90,28 +45,53 @@ export function MenuManager() {
   });
   const { toast } = useToast();
 
+  useEffect(() => {
+    fetchMenuItems();
+  }, []);
+
+  const fetchMenuItems = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('menu_items')
+        .select('*')
+        .order('display_order');
+
+      if (error) throw error;
+      setMenuItems(data || []);
+    } catch (error) {
+      console.error('Error fetching menu items:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось загрузить пункты меню",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       if (editingItem) {
-        setMenuItems(menuItems.map(item => 
-          item.id === editingItem.id 
-            ? { ...item, ...formData }
-            : item
-        ));
+        const { error } = await supabase
+          .from('menu_items')
+          .update(formData)
+          .eq('id', editingItem.id);
+
+        if (error) throw error;
         
         toast({
           title: "Успешно",
           description: "Пункт меню обновлен",
         });
       } else {
-        const newItem: MenuItem = {
-          ...formData,
-          id: Date.now().toString(),
-          is_active: true
-        };
-        setMenuItems([...menuItems, newItem]);
+        const { error } = await supabase
+          .from('menu_items')
+          .insert([formData]);
+
+        if (error) throw error;
         
         toast({
           title: "Успешно",
@@ -128,6 +108,7 @@ export function MenuManager() {
         is_external: false,
         display_order: 0
       });
+      fetchMenuItems();
     } catch (error) {
       console.error('Error saving menu item:', error);
       toast({
@@ -154,12 +135,18 @@ export function MenuManager() {
     if (!confirm("Вы уверены, что хотите удалить этот пункт меню?")) return;
 
     try {
-      setMenuItems(menuItems.filter(item => item.id !== id));
+      const { error } = await supabase
+        .from('menu_items')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
       
       toast({
         title: "Успешно",
         description: "Пункт меню удален",
       });
+      fetchMenuItems();
     } catch (error) {
       console.error('Error deleting menu item:', error);
       toast({
@@ -172,16 +159,18 @@ export function MenuManager() {
 
   const toggleActive = async (id: string, currentStatus: boolean) => {
     try {
-      setMenuItems(menuItems.map(item => 
-        item.id === id 
-          ? { ...item, is_active: !currentStatus }
-          : item
-      ));
+      const { error } = await supabase
+        .from('menu_items')
+        .update({ is_active: !currentStatus })
+        .eq('id', id);
+
+      if (error) throw error;
       
       toast({
         title: "Успешно",
         description: `Пункт меню ${!currentStatus ? 'активирован' : 'деактивирован'}`,
       });
+      fetchMenuItems();
     } catch (error) {
       console.error('Error toggling menu item status:', error);
       toast({
@@ -195,6 +184,14 @@ export function MenuManager() {
   const generateKey = (name: string) => {
     return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <Card>
